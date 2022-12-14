@@ -151,3 +151,14 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+
+#firebase
+firebase.exe
+/macos/Runner/GoogleService-Info.plist
+/macos/firebase_app_id_file.json
+/lib/firebase_options.dart
+/ios/Runner/GoogleService-Info.plist
+/ios/firebase_app_id_file.json
+/android/app/google-services.json
+#custom firebase text file
+google_signin_html_tag.txt
