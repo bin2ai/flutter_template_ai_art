@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'firebase_options.dart';
 import 'screens/Home.dart';
+import 'screens/art_image.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,17 +31,31 @@ class MyApp extends StatelessWidget {
           authRepository: RepositoryProvider.of<FirebaseAuthRepo>(context),
         ),
         child: MaterialApp(
-          home: StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                // If the snapshot has user data, then they're already signed in. So Navigating to the Dashboard.
-                if (snapshot.hasData) {
-                  // return const Dashboard();
-                  return const Home();
-                }
-                // Otherwise, they're not signed in. Show the sign in page.
-                return const SignIn();
-              }),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is UnAuthenticated) {
+                      return const SignIn();
+                    } else if (state is Authenticated) {
+                      return const Dashboard();
+                    } else {
+                      return const SignIn();
+                    }
+                  },
+                ),
+            '/image': (context) => BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is UnAuthenticated) {
+                      return const SignIn();
+                    } else if (state is Authenticated) {
+                      return const ImageEditPage();
+                    } else {
+                      return const SignIn();
+                    }
+                  },
+                ),
+          },
         ),
       ),
     );

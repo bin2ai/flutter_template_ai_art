@@ -3,6 +3,7 @@ import 'package:flutter_template_ai_art/screens/sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_template_ai_art/widgets/my_app_bar.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -12,9 +13,7 @@ class Dashboard extends StatelessWidget {
     // Getting the user from the FirebaseAuth Instance
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-      ),
+      appBar: MyAppbar(),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is UnAuthenticated) {
