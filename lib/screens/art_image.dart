@@ -1,8 +1,6 @@
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../utility/image.dart';
 import '../utility/theme.dart';
 
@@ -14,7 +12,6 @@ class ImageEditPage extends StatefulWidget {
 
 class _ImageEditPageState extends State<ImageEditPage> {
   ColorMode bgColorMode = ColorMode.dark;
-
   Uint8List selectedImageData = Uint8List.fromList([]);
   Uint8List maskImageData = resetMask(512, 512);
   List<Path> paths = [];
@@ -33,10 +30,9 @@ class _ImageEditPageState extends State<ImageEditPage> {
     colorRedo = Colors.grey;
   }
 
-  /*details can be either type DragStartDetails or DragUpdateDetails or DragDownDetails*/
-  void _maskContinuePath(dynamic details) {
-    currentPath.addOval(
-        Rect.fromCircle(center: details.localPosition, radius: brushSize));
+  void _maskContinuePath(Offset localPosition) {
+    currentPath
+        .addOval(Rect.fromCircle(center: localPosition, radius: brushSize));
     setState(() {});
   }
 
@@ -86,11 +82,9 @@ class _ImageEditPageState extends State<ImageEditPage> {
   void _selectImage() async {
     // Prompt the user to select an image from the device's gallery
     var image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    // Read the image data into a Uint8List
     Uint8List? imageData = await image?.readAsBytes();
-    setState(() {
-      selectedImageData = imageData!;
-    });
+    selectedImageData = imageData!;
+    setState(() {});
   }
 
   void _removeImage() {
@@ -98,13 +92,13 @@ class _ImageEditPageState extends State<ImageEditPage> {
     setState(() {});
   }
 
-  void _submit() {
-    //todo: save image
-  }
-
   Future<void> _saveMask() async {
     maskImageData = await saveMask(paths);
     setState(() {});
+  }
+
+  void _submit() {
+    //todo: save image
   }
 
   @override
@@ -220,9 +214,9 @@ class _ImageEditPageState extends State<ImageEditPage> {
                         width: 512,
                         child: GestureDetector(
                           onPanStart: (DragStartDetails details) =>
-                              _maskContinuePath(details),
+                              _maskContinuePath(details.localPosition),
                           onPanUpdate: (DragUpdateDetails details) =>
-                              _maskContinuePath(details),
+                              _maskContinuePath(details.localPosition),
                           onPanEnd: (DragEndDetails details) =>
                               _maskFinishPath(),
                         ),
