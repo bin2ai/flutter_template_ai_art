@@ -1,68 +1,21 @@
-//create image mask full of white pixels and size w,h
 import 'dart:typed_data';
-import 'dart:ui';
-import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
 
-Uint8List resetMask(int w, int h) {
-  final mask = Uint8List(w * h * 4);
-  for (var i = 0; i < mask.length; i += 4) {
-    mask[i] = 255; //red
-    mask[i + 1] = 255; //green
-    mask[i + 2] = 255; //blue
-    mask[i + 3] = 255; //alpha
+Future<Uint8List?> selectImage() async {
+  try {
+    XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    Uint8List? imageData = await image?.readAsBytes();
+    return imageData;
+  } catch (e) {
+    throw Exception(e.toString());
   }
-
-  // Encode the image data in JPEG format
-  return img.encodeJpg(img.Image.fromBytes(w, h, mask)) as Uint8List;
 }
 
-// custom painter class to draw the paths on the canvas
-class DrawingPainter extends CustomPainter {
-  DrawingPainter(this.paths, this.brushSize);
-
-  final List<Path> paths;
-  double brushSize;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // draw each path in the list
-    for (final path in paths) {
-      Paint paint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill
-        ..isAntiAlias = true;
-      //if path is outside canvas, clip it
-      canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
-      canvas.drawPath(path, paint);
-    }
+Uint8List removeImage() {
+  try {
+    Uint8List imageData = Uint8List.fromList([]);
+    return imageData;
+  } catch (e) {
+    throw Exception(e.toString());
   }
-
-  @override
-  bool shouldRepaint(DrawingPainter oldDelegate) => true;
-}
-
-Future<Uint8List> saveMask(List<Path> paths) async {
-  //cave paths from canvas to memory image
-  final recorder = PictureRecorder();
-  final canvas = Canvas(recorder);
-  //make initial canvas background white
-  canvas.drawRect(
-      const Rect.fromLTWH(0, 0, 512, 512), Paint()..color = Colors.white);
-  //setup paint
-  final paint = Paint()
-    ..color = Colors.black
-    ..style = PaintingStyle.fill
-    ..isAntiAlias = true;
-  //draw paths
-  for (var path in paths) {
-    canvas.drawPath(path, paint);
-  }
-  final image = recorder.endRecording().toImage(512, 512);
-  ByteData? pngBytes;
-  //save image in memory
-  await image.then((value) async {
-    pngBytes = await value.toByteData(format: ImageByteFormat.png);
-  });
-  return pngBytes!.buffer.asUint8List();
 }
