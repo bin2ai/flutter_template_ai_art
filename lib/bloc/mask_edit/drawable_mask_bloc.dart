@@ -9,18 +9,13 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
   AiArtRepo drawableMaskRepo = AiArtRepo();
 
   DrawableMaskBloc() : super(StateMaskInitial()) {
-    //events:
-
     on<DrawableMaskInitialEvent>((event, emit) {
-      print("entered DrawableMaskInitialEvent");
       drawableMaskRepo.isMaskVisible = false;
-
       emit(StateMaskInitial());
     });
 
     on<DrawableMaskContinuePathEvent>((event, emit) {
       //event created change in localPosition, not brushSize
-      print("entered DrawableMaskContinuePathEvent");
       try {
         emit(const StateMaskProcessing());
         drawableMaskRepo.maskContinuePath(
@@ -34,11 +29,8 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
 
     on<DrawableMaskFinishPathEvent>((event, emit) {
       try {
-        print("entered DrawableMaskFinishPathEvent");
         emit(const StateMaskProcessing());
         drawableMaskRepo.maskFinishPath();
-
-        print("paths length: ${drawableMaskRepo.paths.length}");
         emit(StateMaskLoaded(drawableMaskRepo));
       } catch (e) {
         emit(StateMaskError(e.toString()));
@@ -47,12 +39,9 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
 
     on<DrawableMaskUndoEvent>((event, emit) {
       try {
-        print("entered DrawableMaskUndoEvent");
         emit(const StateMaskProcessing());
         drawableMaskRepo.maskUndo();
-
         emit(StateMaskLoaded(drawableMaskRepo));
-        print("index: ${drawableMaskRepo.currentPathIndex}");
       } catch (e) {
         emit(StateMaskError(e.toString()));
       }
@@ -60,11 +49,8 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
 
     on<DrawableMaskRedoEvent>((event, emit) {
       try {
-        print("entered DrawableMaskRedoEvent");
         emit(const StateMaskProcessing());
         drawableMaskRepo.maskRedo();
-
-        print("index: ${drawableMaskRepo.currentPathIndex}");
         emit(StateMaskLoaded(drawableMaskRepo));
       } catch (e) {
         emit(StateMaskError(e.toString()));
@@ -73,7 +59,6 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
 
     on<DrawableMaskClearEvent>((event, emit) {
       try {
-        print("entered DrawableMaskClearEvent");
         emit(const StateMaskProcessing());
         drawableMaskRepo
           ..maskClear()
@@ -86,10 +71,8 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
 
     on<DrawableMaskBrushSizeChangedEvent>((event, emit) {
       try {
-        print("entered DrawableMaskBrushSizeChangedEvent");
         emit(const StateMaskProcessing());
-        drawableMaskRepo..setBrushSize(event.brushSize);
-
+        drawableMaskRepo.setBrushSize(event.brushSize);
         emit(StateMaskLoaded(drawableMaskRepo));
       } catch (e) {
         emit(StateMaskError(e.toString()));
@@ -98,10 +81,8 @@ class DrawableMaskBloc extends Bloc<DrawableMaskEvent, DrawableMaskState> {
 
     on<DrawableMaskVisibilityToggledEvent>((event, emit) {
       try {
-        print("entered DrawableMaskVisibilityToggledEvent");
         emit(const StateMaskProcessing());
         drawableMaskRepo.toggleVisibility();
-
         emit(StateMaskLoaded(drawableMaskRepo));
       } catch (e) {
         emit(StateMaskError(e.toString()));

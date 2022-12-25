@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/image_edit/image_bloc.dart';
 import '../../../bloc/mask_edit/drawable_mask_bloc.dart';
-import '../../widgets/drawable_mask.dart';
+import 'drawable_mask.dart';
 
 class ImageEditor extends StatelessWidget {
   const ImageEditor({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print("here");
     //bloc builder
     return Scaffold(
       appBar: AppBar(title: const Text('Image Editor')),
